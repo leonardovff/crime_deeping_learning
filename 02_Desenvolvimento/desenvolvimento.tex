@@ -10,6 +10,43 @@ Este capítulo descreve a revisão de literatura sobre os fundamentos teóricos 
 \section{Revisão de literatura}
 \label{Sec:revisaoliteratura}
 
+%% ================================================================
+%% TODO: Seção sobre Criminologia Computacional e Predição de Crime
+%% ================================================================
+\subsection{TODO -- Predição espacial do crime}
+\label{Sec:todo_crime_prediction}
+
+% TODO: Esta subseção precisa ser escrita. Deve cobrir:
+%
+% 1. Análise espacial do crime e hotspots:
+%    - Conceito de hotspot e concentração espacial do crime (já citado na
+%      introdução via Weisburd 2015, mas precisa ser aprofundado aqui).
+%    - Abordagens tradicionais: Kernel Density Estimation (KDE), modelos
+%      de ponto (point-process), ARIMA espacial, etc.
+%
+% 2. Predição de crime como problema espaço-temporal:
+%    - Representação em grids: como o espaço urbano é discretizado em
+%      células de área fixa e o tempo em janelas regulares.
+%    - Desafio da esparsidade: a maioria das células não apresenta crime
+%      na maioria dos períodos, gerando dados altamente desbalanceados.
+%    - Formulação do problema: entrada = sequência de mapas passados,
+%      saída = mapa de risco futuro.
+%
+% 3. Aplicações de deep learning na predição de crime:
+%    - Evolução dos métodos: de modelos estatísticos clássicos para
+%      abordagens baseadas em redes neurais.
+%    - Citar e discutir: Wang et al. (2019), Rotaru et al. (2022),
+%      Albors Zumel et al. (2025) e outros trabalhos relevantes.
+%    - Limitações reportadas na literatura: baixa precisão, vieses,
+%      questões éticas (citar Papachristos 2022).
+%
+% Referências já na .bib que podem ser usadas:
+%   \cite{Weisburd2022}, \cite{wang2019deep}, \cite{rotaru2022event},
+%   \cite{albors_zumel_deep_2025}, \cite{papachristos_promises_2022}
+
+\textbf{[SEÇÃO PENDENTE]} -- Redigir fundamentação sobre análise espacial do crime, representação espaço-temporal em grids, evolução de métodos de predição criminal (de modelos estatísticos a deep learning) e trabalhos relacionados que empregaram ConvLSTM ou arquiteturas similares para essa tarefa.
+
+
 \subsection{Redes Neurais Artificiais}
 
 As Redes Neurais Artificiais (RNAs) são sistemas computacionais baseados em modelos matemáticos inspirados no sistema nervoso, buscando aproximar, de forma abstrata, mecanismos de processamento e aprendizagem associados ao cérebro humano \cite{sala2019}. Um marco histórico ocorreu em 1943, quando Warren McCulloch e Walter Pitts propuseram um dos primeiros modelos formais de neurônio artificial através de um modelo matemático que estabeleceu as premissas fundamentais para futuras implementações computacionais \cite{mc1943}. Essas redes operam por processamento paralelo e distribuído, no qual múltiplas unidades simples atuam simultaneamente e de forma interconectada.
@@ -21,6 +58,35 @@ Além da estrutura em camadas, o desempenho das RNAs depende do processo de trei
 Quando os dados apresentam estrutura espacial, as Redes Neurais Convolucionais (CNNs) exploram a organização em grade por meio de operações de convolução e compartilhamento de pesos, tornando-se eficazes para identificar padrões locais e construir representações hierárquicas em imagens e mapas \cite{lecun2015}. Já nos cenários em que a informação é sequencial, as Redes Neurais Recorrentes (RNNs) incorporam um estado interno que é atualizado ao longo do tempo, permitindo a modelagem de dependências temporais entre observações. 
 Contudo, RNNs tradicionais podem apresentar limitações para aprender dependências de longo prazo, motivando o desenvolvimento de arquiteturas com mecanismos de memória e portas de controle, como as Long Short-Term Memory (LSTM) \cite{lipton2015}.
 
+%% ================================================================
+%% TODO: Seção detalhada sobre LSTM
+%% ================================================================
+\subsection{TODO -- Long Short-Term Memory (LSTM)}
+\label{Sec:todo_lstm}
+
+% TODO: Esta subseção precisa ser escrita. A LSTM é base direta da ConvLSTM
+% e merece tratamento próprio. Deve cobrir:
+%
+% 1. Problema do gradiente desvanecente (vanishing gradient) nas RNNs
+%    tradicionais e por que a LSTM foi proposta para resolvê-lo.
+%
+% 2. Arquitetura da célula LSTM com suas 4 portas:
+%    - Porta de esquecimento (forget gate): f_t = sigma(W_f * [h_{t-1}, x_t] + b_f)
+%    - Porta de entrada (input gate): i_t = sigma(W_i * [h_{t-1}, x_t] + b_i)
+%    - Candidata ao estado celular: g_t = tanh(W_g * [h_{t-1}, x_t] + b_g)
+%    - Atualização do estado celular: c_t = f_t * c_{t-1} + i_t * g_t
+%    - Porta de saída (output gate): o_t = sigma(W_o * [h_{t-1}, x_t] + b_o)
+%    - Estado oculto: h_t = o_t * tanh(c_t)
+%
+% 3. Incluir diagrama da célula LSTM (recomendado).
+%
+% 4. Breve menção a variantes (GRU, Peephole LSTM) se desejar.
+%
+% Referências: \cite{lipton2015}, Hochreiter & Schmidhuber (1997) [adicionar à .bib]
+
+\textbf{[SEÇÃO PENDENTE]} -- Detalhar a arquitetura LSTM: problema do gradiente desvanecente, mecanismo de portas (forget, input, output), equações do estado celular e do estado oculto. Incluir diagrama da célula LSTM.
+
+
 Essas distinções tornam-se especialmente relevantes em problemas espaço-temporais, nos quais é necessário capturar simultaneamente padrões no espaço e dinâmicas de tempo. Nesse contexto, arquiteturas híbridas como a ConvLSTM combinam convoluções (para modelar as correlações espaciais em grids) com recorrência (para representar sequências de mapas), sendo, portanto, adequadas para tarefas de previsão em dados espaço-temporais \cite{shi2015}.
 
 
@@ -29,6 +95,122 @@ Essas distinções tornam-se especialmente relevantes em problemas espaço-tempo
 A ConvLSTM (Convolutional Long Short-Term Memory) é uma arquitetura derivada das redes LSTM, proposta por Shi et al. \cite{shi2015}, como já citado, para lidar com sequências espaço-temporais, ou seja, que possuem simultaneamente padrões espaciais e dinâmicas de tempo. Diferentemente da LSTM, em que as transformações entre entrada e estado são realizadas por operações totalmente conectadas, a ConvLSTM substitui essas operações por convoluções, preservando a estrutura espacial dos dados ao longo do tempo. Isso permite que o modelo capture tanto a evolução temporal quanto as correlações espaciais. 
 
 As convoluções consistem na aplicação de pequenos filtros na entrada, também chamados de kernels, que analisam partes pequenas da grade de dados. Esses filtros identificam a concentração, mudanças e semelhanças entre a região analisada e as regiões vizinhas. À medida que percorrem a entrada, as características capturadas são organizadas em diferentes posições do espaço, formando representações que destacam onde determinados padrões ocorrem. 
+
+%% ================================================================
+%% TODO: Equações formais da ConvLSTM
+%% ================================================================
+% TODO: Adicionar as equações formais da ConvLSTM nesta subseção.
+% A diferença para a LSTM é que as multiplicações matriciais (W * x)
+% são substituídas por convoluções (W ** x):
+%
+%   i_t = sigma(W_{xi} ** X_t + W_{hi} ** H_{t-1} + b_i)
+%   f_t = sigma(W_{xf} ** X_t + W_{hf} ** H_{t-1} + b_f)
+%   C_t = f_t . C_{t-1} + i_t . tanh(W_{xc} ** X_t + W_{hc} ** H_{t-1} + b_c)
+%   o_t = sigma(W_{xo} ** X_t + W_{ho} ** H_{t-1} + b_o)
+%   H_t = o_t . tanh(C_t)
+%
+% onde ** denota convolução e . denota produto de Hadamard.
+% Destacar que X_t, H_t, C_t são tensores 3D (canais x altura x largura),
+% o que preserva a estrutura espacial.
+% Incluir diagrama comparativo LSTM vs ConvLSTM (recomendado).
+%
+% Referência: \cite{shi2015}
+
+\textbf{[PENDENTE]} -- Incluir equações formais da ConvLSTM (portas com convolução em vez de multiplicação matricial) e, idealmente, diagrama comparativo LSTM vs ConvLSTM.
+
+
+%% ================================================================
+%% TODO: Técnicas de regularização e treinamento
+%% ================================================================
+\subsection{TODO -- Técnicas de regularização e otimização}
+\label{Sec:todo_regularizacao}
+
+% TODO: Esta subseção precisa ser escrita. Conceitos usados no modelo
+% mas que não foram fundamentados na revisão de literatura:
+%
+% 1. Dropout: desligamento aleatório de neurônios durante o treinamento
+%    para prevenir sobreajuste (Srivastava et al., 2014) [adicionar à .bib].
+%
+% 2. Batch Normalization: normalização das ativações entre camadas
+%    para estabilizar e acelerar o treinamento (Ioffe & Szegedy, 2015)
+%    [adicionar à .bib].
+%
+% 3. Funções de ativação: Sigmoid, ReLU, Tanh -- usadas nas portas da
+%    ConvLSTM e entre camadas. Breve descrição de cada uma.
+%
+% 4. Otimizador Adam: combinação de Momentum e RMSProp (Kingma & Ba, 2015)
+%    [adicionar à .bib].
+%
+% 5. Learning rate scheduling: Cosine Annealing (Loshchilov & Hutter, 2017)
+%    [adicionar à .bib].
+
+\textbf{[SEÇÃO PENDENTE]} -- Fundamentar Dropout, Batch Normalization, funções de ativação (sigmoid, ReLU, tanh), otimizador Adam e escalonamento de taxa de aprendizado (Cosine Annealing). Todos são usados no modelo mas não estão no referencial.
+
+
+%% ================================================================
+%% TODO: Métricas de avaliação
+%% ================================================================
+\subsection{TODO -- Métricas de avaliação para classificação binária}
+\label{Sec:todo_metricas}
+
+% TODO: Esta subseção precisa ser escrita. As métricas são usadas
+% extensivamente na avaliação mas nunca definidas formalmente:
+%
+% 1. Matriz de confusão: TP, FP, TN, FN.
+%
+% 2. Precision = TP / (TP + FP)
+%
+% 3. Recall (Sensibilidade) = TP / (TP + FN)
+%
+% 4. F1-Score = 2 * (Precision * Recall) / (Precision + Recall)
+%
+% 5. Threshold de classificação: como logits/probabilidades são
+%    convertidos em previsão binária via limiar.
+%
+% 6. Desbalanceamento de classes: definição formal, impacto nas métricas
+%    (accuracy paradox), e estratégias de mitigação:
+%    - Ponderação da função de perda (pos_weight)
+%    - Focal Loss (Lin et al., 2017) [adicionar à .bib]
+%    - Oversampling/undersampling
+%
+% 7. BCEWithLogitsLoss: combinação de sigmoid + binary cross-entropy
+%    com estabilidade numérica.
+
+\textbf{[SEÇÃO PENDENTE]} -- Definir formalmente matriz de confusão, precision, recall, F1-score, threshold de classificação, desbalanceamento de classes e estratégias de mitigação (pos\_weight, focal loss). Também definir BCEWithLogitsLoss.
+
+
+%% ================================================================
+%% TODO: Trabalhos relacionados
+%% ================================================================
+\subsection{TODO -- Trabalhos relacionados}
+\label{Sec:todo_trabalhos_relacionados}
+
+% TODO: Esta subseção precisa ser escrita. Deve discutir os trabalhos
+% que servem de base e comparação para este estudo:
+%
+% 1. Albors Zumel, Tizzoni & Campedelli (2025) -- artigo base deste TCC:
+%    - ConvLSTM para crime forecasting em 4 cidades dos EUA
+%    - Grid de 0.2 km², previsão 12h à frente, 14 dias de lookback
+%    - Comparação com baselines (logistic regression, random forest, LSTM)
+%    - Resultados: DL supera baselines, mas precisão geral ainda limitada
+%    - Contribuição de mobilidade + sociodemografia
+%    \cite{albors_zumel_deep_2025}
+%
+% 2. Wang et al. (2019) -- deep learning para crime forecasting em tempo real:
+%    - Formulação ternária do problema
+%    \cite{wang2019deep}
+%
+% 3. Rotaru et al. (2022) -- predição event-level com viés de enforcement:
+%    - Análise de viés policial nos dados e nos modelos
+%    \cite{rotaru2022event}
+%
+% 4. Papachristos (2022) -- promessas e perigos da predição de crime:
+%    - Aspectos éticos e limitações
+%    \cite{papachristos_promises_2022}
+%
+% Comparar: dados usados, granularidade, arquitetura, métricas, resultados.
+
+\textbf{[SEÇÃO PENDENTE]} -- Revisar e comparar os trabalhos de referência: Albors Zumel et al. (2025) como base metodológica, Wang et al. (2019) para formulação do problema, Rotaru et al. (2022) para questões de viés, e Papachristos (2022) para aspectos éticos. Comparar dados, granularidade, arquiteturas e resultados obtidos.
 
 
 %% ================================================================
@@ -78,6 +260,14 @@ Para cada cidade, o polígono do limite municipal foi obtido via OpenStreetMap (
 
 Para Maceió, uma grade regular de $39 \times 39$ células foi sobreposta ao bounding box do polígono municipal, resultando em 1.521 células. Cada ocorrência criminal foi atribuída à célula correspondente por meio de verificação de contenção geométrica (point-in-polygon).
 
+% TODO: Calcular e informar a área aproximada de cada célula em km².
+% O bounding box de Maceió tem extensão aprox. de ~0.25° lat × ~0.15° lon.
+% Com 39 divisões, cada célula tem lado aprox. de X km, resultando em
+% uma área de ~Y km². Comparar com o estudo de referência (Albors Zumel
+% et al., 2025), que utilizou células de 0,2 km² (0,077 sq. miles).
+% Justificar a escolha de 39×39 (ou indicar que foi experimental).
+\textbf{[PENDENTE]} -- Informar a área aproximada de cada célula (em km\textsuperscript{2}) e justificar a escolha do tamanho $39 \times 39$. Comparar com o grid de 0,2~km\textsuperscript{2} usado por Albors Zumel et al. (2025).
+
 \subsubsection{Máscara de validade}
 
 Uma máscara binária de $39 \times 39$ foi gerada, indicando quais células do grid possuem interseção com o polígono municipal. Para Maceió, 811 das 1.521 células foram marcadas como válidas. Essa máscara é utilizada na etapa de avaliação para ignorar células que estão fora dos limites da cidade.
@@ -93,9 +283,27 @@ As ocorrências foram contabilizadas por célula e por hora do ano, formando uma
 
 Uma janela deslizante de 8 passos (7 dias de lookback + 1 dia de alvo) foi aplicada sobre a sequência temporal. Para cada amostra, em vez de utilizar o grid completo de $39 \times 39$, foram extraídos 5 sub-grids de $16 \times 16$ em posições aleatórias dentro da grade, ampliando o volume de amostras de treinamento e permitindo que o modelo opere sobre regiões locais da cidade.
 
+% TODO: Justificar as seguintes escolhas de hiperparâmetros do pipeline:
+% - Por que lookback de 7 dias (e não 14, como no artigo de referência)?
+% - Por que sub-grids de 16×16? Qual a relação com o grid total de 39×39?
+% - Por que 5 sub-grids por amostra temporal? Isso multiplica os dados por 5.
+% - Essas escolhas foram baseadas no artigo de referência, em experimentos
+%   preliminares, ou em limitações computacionais?
+\textbf{[PENDENTE]} -- Justificar a escolha do lookback de 7 dias, o tamanho do sub-grid ($16 \times 16$) e a quantidade de 5 sub-grids por amostra. Indicar se foram baseados na literatura, em experimentos ou em restrições computacionais.
+
 \subsubsection{Divisão cronológica treino/validação}
 
-A divisão dos dados respeita rigorosamente a ordem temporal para evitar vazamento de informação. Os primeiros 90\% da sequência são utilizados para treinamento e os 10\% finais para validação. Para Maceió, isso resultou em 17.985 amostras de treinamento e 1.925 amostras de validação (cada amostra com formato $7 \times 16 \times 16 \times 1$ para a entrada e $16 \times 16 \times 1$ para o alvo). Os dados foram salvos no formato \texttt{.npz} (arrays comprimidos NumPy).
+A divisão dos dados respeita rigorosamente a ordem temporal para evitar vazamento de informação. Os primeiros 90\% da sequência são utilizados para treinamento e os 10\% finais para validação. Para Maceió, isso resultou em 17.985 amostras de treinamento e 1.925 amostras de validação (cada amostra com formato $7 \times 16 \times 16 \times 1$ para a entrada e $16 \times 16 \times 1$ para o alvo). Os dados foram salvos no formato \texttt{.npz} (arrays comprimidos NumPy). Valores ausentes (NaN) remanescentes foram substituídos por zero antes do treinamento.
+
+% TODO: Discutir as seguintes questões sobre a divisão dos dados:
+% - A divisão é apenas treino/validação (90/10). Não há conjunto de teste
+%   independente. Isso significa que os resultados reportados são sobre
+%   validação, não sobre dados completamente inéditos. Considerar se é
+%   necessário adicionar um split de teste (ex.: 80/10/10) ou justificar
+%   por que a validação cronológica é suficiente.
+% - O split 90/10 coloca ~10 anos em treino e ~1 ano em validação.
+%   Indicar quais anos aproximados compõem cada partição.
+\textbf{[PENDENTE]} -- Discutir a ausência de conjunto de teste separado (apenas treino/validação). Justificar ou propor um split treino/validação/teste. Indicar quais anos compõem cada partição.
 
 
 %% ================================================================
@@ -115,6 +323,15 @@ O modelo foi implementado em PyTorch e consiste em três componentes principais:
 \end{enumerate}
 
 O modelo possui 9.262 parâmetros treináveis. A entrada tem formato $(B, 7, 16, 16, 1)$ (batch, sequência, altura, largura, canais) e a saída tem formato $(B, 16, 16)$, representando as probabilidades de ocorrência de crime para cada célula no próximo passo temporal.
+
+% TODO: Incluir justificativa dos hiperparâmetros da arquitetura:
+% - Por que 3 camadas ConvLSTM? (profundidade)
+% - Por que 7 canais ocultos? (capacidade representacional)
+% - Por que kernel 3×3?
+% - Por que dropout de 0.8? (valor muito alto, justificar)
+% - Essas escolhas foram tuned? Grid search? Baseadas no artigo de referência?
+% - Incluir diagrama/figura da arquitetura do modelo (recomendado para TCC).
+\textbf{[PENDENTE]} -- Justificar a escolha dos hiperparâmetros da arquitetura (3 camadas, 7 canais, kernel 3$\times$3, dropout 0,8). Indicar se foram baseados no artigo de referência ou em tuning. Incluir diagrama/figura da arquitetura (recomendado).
 
 \subsection{Função de perda e otimização}
 
