@@ -5,15 +5,7 @@
 \mychapter{Desenvolvimento}
 \label{Cap:desenvolvimento}
 
-Este capítulo apresenta considerações de ordem geral sobre a
-organização e desenvolvimento do texto.
-
-\section{O que escrever}
-\label{Sec:oque}
-
-É possível iniciar o capítulo de desenvolvimento informando como será desenvolvido o trabalho e o detalhe das ferramentas ou o conteúdo que será abordado e utilizado. Em seguida comente o conteúdo em conjunto com o conhecimento adquirido junto as consultas e referências bibliográficas. 
-Isso demonstra que foi feito uma pesquisa anterior e mostra que o trabalho tem relevância científica, ou seja, não está sendo "inventada a roda". 
-
+Este capítulo descreve a revisão de literatura sobre os fundamentos teóricos utilizados, a metodologia adotada para a coleta, pré-processamento e modelagem dos dados, bem como os detalhes de implementação do pipeline experimental.
 
 \section{Revisão de literatura}
 \label{Sec:revisaoliteratura}
@@ -24,7 +16,7 @@ As Redes Neurais Artificiais (RNAs) são sistemas computacionais baseados em mod
 
 Em termos de funcionamento, uma RNA organiza essas unidades em camadas. Cada neurônio recebe valores de entrada, realiza uma combinação ponderada por pesos sinápticos, adiciona um viés e aplica uma função de ativação não linear, gerando um sinal que é propagado para os neurônios da camada seguinte. Essa composição em camadas permite o aprendizado de representações hierárquicas, onde camadas iniciais tendem a capturar padrões mais simples, enquanto camadas posteriores combinam esses padrões para modelar relações mais complexas \cite{gupta2018}.
 
-Além da estrutura em camadas, o desempenho das RNAs depende do processo de treinamento, no qual os pesos e vieses são ajustados para minimizar o erro entre as saídas previstas e os valores reais. Em geral, esse ajuste é realizado por métodos de otimização baseados em gradiente, utilizando o algoritmo de retropropagação do erro (backpropagation) para calcular, de forma eficiente, como cada parâmetro da rede contribui para a função de perda \cite{rumelhart1986learning} . Os diferentes arranjos dessas camadas, bem como a forma como os parâmetros são conectados e compartilhados, dão origem a arquiteturas adequadas a diferentes tipos de dados e tarefas. Redes feedforward processam a informação em um fluxo unidirecional, sendo empregadas em problemas gerais de classificação e regressão. 
+Além da estrutura em camadas, o desempenho das RNAs depende do processo de treinamento, no qual os pesos e vieses são ajustados para minimizar o erro entre as saídas previstas e os valores reais. Em geral, esse ajuste é realizado por métodos de otimização baseados em gradiente, utilizando o algoritmo de retropropagação do erro (backpropagation) para calcular, de forma eficiente, como cada parâmetro da rede contribui para a função de perda \cite{rumelhart1986learning}. Os diferentes arranjos dessas camadas, bem como a forma como os parâmetros são conectados e compartilhados, dão origem a arquiteturas adequadas a diferentes tipos de dados e tarefas. Redes feedforward processam a informação em um fluxo unidirecional, sendo empregadas em problemas gerais de classificação e regressão. 
 
 Quando os dados apresentam estrutura espacial, as Redes Neurais Convolucionais (CNNs) exploram a organização em grade por meio de operações de convolução e compartilhamento de pesos, tornando-se eficazes para identificar padrões locais e construir representações hierárquicas em imagens e mapas \cite{lecun2015}. Já nos cenários em que a informação é sequencial, as Redes Neurais Recorrentes (RNNs) incorporam um estado interno que é atualizado ao longo do tempo, permitindo a modelagem de dependências temporais entre observações. 
 Contudo, RNNs tradicionais podem apresentar limitações para aprender dependências de longo prazo, motivando o desenvolvimento de arquiteturas com mecanismos de memória e portas de controle, como as Long Short-Term Memory (LSTM) \cite{lipton2015}.
@@ -34,113 +26,106 @@ Essas distinções tornam-se especialmente relevantes em problemas espaço-tempo
 
 \subsection{ConvLSTM}
 
-A ConvLSTM (Convolutional Long Short-Term Memory) é uma arquitetura derivada das redes LSTM, proposta por  Shi et al. em 2015 (trazer referência), como já citado para lidar com sequências espaço-temporais, ou seja, que possuem simultaneamente padrões espaciais e dinâmicas de tempo. Diferentemente da LSTM, em que as transformações entre entrada e estado são realizadas por operações conectadas, a ConvLSTM substitui essas operações por convoluções, preservando a estrutura espacial dos dados ao longo do tempo \textbackslash{}cite\{shi2015\} isso permite que o modelo capture, tanto a evolução temporal quanto as correlações espaciais. 
+A ConvLSTM (Convolutional Long Short-Term Memory) é uma arquitetura derivada das redes LSTM, proposta por Shi et al. \cite{shi2015}, como já citado, para lidar com sequências espaço-temporais, ou seja, que possuem simultaneamente padrões espaciais e dinâmicas de tempo. Diferentemente da LSTM, em que as transformações entre entrada e estado são realizadas por operações totalmente conectadas, a ConvLSTM substitui essas operações por convoluções, preservando a estrutura espacial dos dados ao longo do tempo. Isso permite que o modelo capture tanto a evolução temporal quanto as correlações espaciais. 
 
-As convoluções consistem na aplicação de pequenos filtros na entrada, também chamados de kernels, que analisam partes pequenas da grade de dados. Esses filtros identificam a concentração, mudanças e semelhanças entre a região analisada e as regiões vizinhas. A medida que percorrem a entrada, as características capturadas são organizadas em diferentes posições do espaço, formando representações que destacam onde determinados padrões ocorrem. 
-
-%arquitetura
-%origem 
-%diferença
+As convoluções consistem na aplicação de pequenos filtros na entrada, também chamados de kernels, que analisam partes pequenas da grade de dados. Esses filtros identificam a concentração, mudanças e semelhanças entre a região analisada e as regiões vizinhas. À medida que percorrem a entrada, as características capturadas são organizadas em diferentes posições do espaço, formando representações que destacam onde determinados padrões ocorrem. 
 
 
-\mychapter{Figuras, tabelas e gráficos}
-\label{Cap:figuras}
+%% ================================================================
+%%  METODOLOGIA
+%% ================================================================
+\section{Metodologia}
+\label{Sec:metodologia}
 
-Uma das maiores dificuldades na edição de textos de qualidade é o
-posicionamento dos elementos gráficos: figuras, gráficos e
-tabelas. Como estes elementos muitas vezes são grandes, aparece o
-dilema sobre o que fazer quando uma quebra de página deveria acontecer
-no meio do elemento. Há duas possibilidades:
+Esta seção detalha as etapas do pipeline experimental implementado neste trabalho, desde a obtenção dos dados brutos até a avaliação do modelo treinado. Todas as etapas foram desenvolvidas em Python, utilizando Jupyter Notebooks e bibliotecas como pandas, geopandas, osmnx, shapely, folium, PyTorch e scikit-learn.
+
+\subsection{Dados de origem}
+\label{Sec:dados}
+
+Os dados de ocorrências criminais foram obtidos junto à Polícia Militar de Alagoas e correspondem a registros georreferenciados (latitude e longitude) de crimes violentos contra o patrimônio nas cidades de Maceió e Arapiraca, cobrindo o período de 2012 a 2022. O conjunto original contém 137.300 registros com 30 variáveis, incluindo natureza do fato, data/hora, coordenadas geográficas e cidade.
+
+\subsection{Pré-processamento dos dados}
+\label{Sec:preprocessamento}
+
+O pré-processamento foi realizado em múltiplas etapas encadeadas:
+
+\subsubsection{Carregamento e limpeza inicial}
+
+Os arquivos CSV de entrada foram carregados e concatenados. As colunas de data foram convertidas para o formato datetime (formato \texttt{dd/mm/yyyy HH:MM:SS}) e as coordenadas de latitude e longitude, originalmente com separador decimal em vírgula, foram convertidas para tipo numérico. Registros com data ou coordenadas inválidas (valores ausentes) foram removidos.
+
+\subsubsection{Filtragem por tipo de crime e agrupamento}
+
+Das 23 naturezas de fato distintas presentes nos dados, foram selecionadas 10 categorias relevantes de roubo, que foram agrupadas em 5 macro-categorias:
+\begin{itemize}
+  \item \textbf{street\_robbery}: roubo a transeunte;
+  \item \textbf{vehicle\_robbery}: roubo de veículo (moto, passeio e outros);
+  \item \textbf{public\_transport\_robbery}: roubo a transporte coletivo (urbano e rodoviário);
+  \item \textbf{commercial\_robbery}: roubo a casa comercial, correspondente bancário e correios;
+  \item \textbf{residential\_robbery}: roubo a residência.
+\end{itemize}
+Após essa filtragem e agrupamento, restaram 119.455 registros, sendo 72.787 em Maceió e 17.421 em Arapiraca, que foram separados em arquivos distintos por cidade.
+
+\subsubsection{Filtragem espacial com polígono municipal}
+
+Para cada cidade, o polígono do limite municipal foi obtido via OpenStreetMap (usando a biblioteca osmnx). Em seguida, realizou-se um spatial join entre os pontos de ocorrência e o polígono, mantendo apenas os registros cujas coordenadas caem efetivamente dentro do município. Para Maceió, 83.512 de 83.612 registros foram mantidos (100 descartados por estarem fora do polígono); para Arapiraca, 19.141 de 19.197 (56 descartados). Os resultados foram visualizados em mapas interativos (folium) para verificação.
+
+\subsection{Construção da representação em grids}
+\label{Sec:grids}
+
+\subsubsection{Geração da grade espacial}
+
+Para Maceió, uma grade regular de $39 \times 39$ células foi sobreposta ao bounding box do polígono municipal, resultando em 1.521 células. Cada ocorrência criminal foi atribuída à célula correspondente por meio de verificação de contenção geométrica (point-in-polygon).
+
+\subsubsection{Máscara de validade}
+
+Uma máscara binária de $39 \times 39$ foi gerada, indicando quais células do grid possuem interseção com o polígono municipal. Para Maceió, 811 das 1.521 células foram marcadas como válidas. Essa máscara é utilizada na etapa de avaliação para ignorar células que estão fora dos limites da cidade.
+
+\subsubsection{Agregação temporal}
+
+As ocorrências foram contabilizadas por célula e por hora do ano, formando uma matriz esparsa \textit{célula} $\times$ \textit{hora}, para cada tipo de crime e para cada ano. Em seguida, essas matrizes horárias foram agregadas em janelas diárias (granularidade de 24h), resultando em sequências temporais com aproximadamente 365 passos por ano. As contagens dos 5 tipos de crime foram somadas e binarizadas (presença/ausência de crime: $\geq 1 \rightarrow 1$, caso contrário $\rightarrow 0$), produzindo um tensor final de dimensão $4.018 \times 39 \times 39 \times 1$ (dias $\times$ linhas $\times$ colunas $\times$ canais) para Maceió, abrangendo 2012--2022.
+
+\subsection{Preparação para treinamento}
+\label{Sec:preparacao}
+
+\subsubsection{Janela deslizante e sub-grids}
+
+Uma janela deslizante de 8 passos (7 dias de lookback + 1 dia de alvo) foi aplicada sobre a sequência temporal. Para cada amostra, em vez de utilizar o grid completo de $39 \times 39$, foram extraídos 5 sub-grids de $16 \times 16$ em posições aleatórias dentro da grade, ampliando o volume de amostras de treinamento e permitindo que o modelo opere sobre regiões locais da cidade.
+
+\subsubsection{Divisão cronológica treino/validação}
+
+A divisão dos dados respeita rigorosamente a ordem temporal para evitar vazamento de informação. Os primeiros 90\% da sequência são utilizados para treinamento e os 10\% finais para validação. Para Maceió, isso resultou em 17.985 amostras de treinamento e 1.925 amostras de validação (cada amostra com formato $7 \times 16 \times 16 \times 1$ para a entrada e $16 \times 16 \times 1$ para o alvo). Os dados foram salvos no formato \texttt{.npz} (arrays comprimidos NumPy).
+
+
+%% ================================================================
+%%  MODELO E TREINAMENTO
+%% ================================================================
+\section{Arquitetura do modelo e treinamento}
+\label{Sec:modelo}
+
+\subsection{Arquitetura ConvLSTM implementada}
+
+O modelo foi implementado em PyTorch e consiste em três componentes principais:
+
 \begin{enumerate}
-\item O autor informa exatamente onde o elemento gr‡fico deve ficar no
-texto, evitando que quebras de páginas aconteçam no meio de um
-elemento. O problema com esta abordagem é que todo o trabalho de
-posicionamento pode ser perdido caso se inclua ou se exclua algum
-texto ou elemento.
-\item O editor de texto posiciona os elementos gráficos de forma a não
-deixar espaços em branco nas páginas. Estes elementos que podem ser
-posicionados pelo editor são conhecidos como \emph{elementos
-flutuantes}. O problema com esta abordagem é que o posicionamento
-adotado pode não corresponder às expectativas do autor.
+  \item \textbf{ConvLSTM empilhada}: 3 camadas ConvLSTM com 7 canais ocultos cada e kernels de $3 \times 3$. Cada camada ConvLSTM é seguida por ativação ReLU e normalização por lote (BatchNorm3d).
+  \item \textbf{Dropout}: camada de dropout com taxa $p = 0{,}8$ aplicada sobre o estado oculto da última camada.
+  \item \textbf{Convolução final}: uma convolução $3 \times 3$ com 1 canal de saída (padding ``same''), produzindo o mapa de previsão para o dia seguinte.
 \end{enumerate}
 
+O modelo possui 9.262 parâmetros treináveis. A entrada tem formato $(B, 7, 16, 16, 1)$ (batch, sequência, altura, largura, canais) e a saída tem formato $(B, 16, 16)$, representando as probabilidades de ocorrência de crime para cada célula no próximo passo temporal.
 
+\subsection{Função de perda e otimização}
 
-\section{Tabelas em \LaTeX}
-\label{Sec:tabelas}
+Dada a severa esparsidade dos dados ($\sim$2\% das células apresentam crime em qualquer dia), foi utilizada a função de perda \texttt{BCEWithLogitsLoss} com \texttt{pos\_weight} calculado como a razão entre o número de amostras negativas e positivas no conjunto de treinamento ($\approx$48,2 para Maceió). Essa ponderação atribui maior importância aos casos positivos durante o treinamento.
 
-Tabelas são construpídas com comandos próprios do \LaTeX, notadamente o
-ambiente \texttt{tabular}. Nada obriga a que o ambiente
-\texttt{tabular} esteja sempre posicionado em um elemento
-flutuante. Se você quiser impor que uma tabela fique obrigatoriamente
-em uma determinada posição do texto, basta não colocar o
-\texttt{tabular} dentro de um \texttt{table}. Tabelas podem até ser
-incluídas no meio de uma frase.  Por exemplo, eu posso dizer que se um
-jogo da velha está na configuração \textsf{\tiny\begin{tabular}{c|c|c}
-x & & x \\ \hline & & o \\ \hline x & o & \end{tabular}} e se o
-jogador ``\textsf{x}'' sabe jogar, ent‹o o jogador ``\textsf{o}'' irá
-perder, independentemente da jogada que faça.
+O otimizador utilizado foi o Adam com taxa de aprendizado de $10^{-5}$, e um escalonador do tipo Cosine Annealing com $T_{\max} = 20$ épocas. O treinamento foi conduzido por 200 épocas com batch size de 55, utilizando GPU (NVIDIA GeForce RTX 4070 Laptop GPU) e semente aleatória fixa (42) para reprodutibilidade.
 
- Exemplos de
-colunas com diferentes larguras e alinhamentos podem ser vistos na
-tabela \ref{Tab:larguracolunas}.
+\subsection{Avaliação com tolerância espacial}
+\label{Sec:avaliacao}
 
-\begin{table}[htbp]
-\begin{tabularx}{\linewidth}{|p{3cm}|X|l|} \hline
-COLUNA p & COLUNA X & COLUNA l \\ \hline
-Largura fixa (não depende do conteúdo) &
-Expandível &
-Ajustável \\ \hline
-Alinhada no topo &
-Alinhada à esquerda &
-Alinhada à esquerda \\ \hline
-\end{tabularx}
-\\[0.5cm]
-\begin{tabularx}{\linewidth}{|b{3cm}|C|r|} \hline
-COLUNA b & COLUNA C (ver \texttt{comandos.tex}) & COLUNA r \\ \hline
-Largura fixa (não depende do conteúdo) &
-Expandível &
-Ajustável \\ \hline
-Alinhada na base &
-Centralizada &
-Alinhada à direita \\ \hline
-\end{tabularx} 
-\caption{Tabelas com colunas de diferentes larguras e alinhamentos}
-\label{Tab:larguracolunas}
-\end{table}
+Além das métricas tradicionais (precision, recall, F1), foi implementada uma avaliação com tolerância espacial, conforme proposto por \citeasnoun{albors_zumel_deep_2025}. Nessa variante, um falso positivo cuja célula vizinha (distância de Chebyshev $\leq 1$) contenha um crime real é reclassificado como acerto espacial (``true positive espacial''). Isso resulta em métricas \textit{precision\_spatial}, \textit{recall\_spatial} e \textit{f1\_spatial}, que reconhecem previsões geograficamente próximas ao evento real.
 
-\section{Figuras em \LaTeX}
-\label{Sec:figuras}
-
-As figuras (imagens, desenhos, gr‡ficos, etc.) devem ser produzidas
-por ferramentas externas ao \LaTeX, salvas em um arquivo e inseridas
-no texto usando o comando \texttt{includegraphics}. Da mesma forma
-que as tabelas, as figuras podem ser flutuantes, caso sejam
-inseridas dentro de um ambiente \texttt{figure}, ou ter uma posição
-fixa no texto (como aqui: \includegraphics{figuras/eu}).
-
-O formato em que você deve salvar os arquivos das figuras para que
-possa incluí-las no texto depende de como você pretende compilar
-o código fonte:
-\begin{itemize}
-\item se o texto vai ser compilado com \texttt{latex}, todos os
-arquivos devem estar no formato EPS (\emph{Encapsulated PostScipt});
-\item se o texto vai ser compilado com \texttt{pdflatex}, os
-arquivos devem estar nos formatos PDF ou JPEG (outros formatos são
-aceitos, mas estes são os recomendáveis).
-\end{itemize}
-
-A figura \ref{Fig:belmonte} mostra um exemplo de inclusão de uma
-imagem EPS no texto \LaTeX.
-
-\begin{figure}[htbp!]
-\begin{center}
-% fbox faz uma borda ao redor do seu argumento
-\fbox{\includegraphics[width=0.75\linewidth]{figuras/belmonte}}
-\caption{Exemplo de imagem real}
-\label{Fig:belmonte}
-\end{center} 
-\end{figure}
+A avaliação foi realizada sobre o conjunto de validação, varrendo thresholds de classificação de 0,50 a 1,00 (incrementos de 0,01). A máscara de validade municipal foi aplicada para que apenas as células dentro dos limites da cidade contribuíssem para as métricas.
 
 
 

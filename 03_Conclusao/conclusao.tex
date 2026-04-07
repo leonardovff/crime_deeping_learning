@@ -5,10 +5,31 @@
 \mychapter{Conclusão}
 \label{Cap:conclusao}
 
-Neste capítulo terá o fechamento do seu trabalho. Informe como foram os resultados obtidos. Quais seus comentários e conhecimento obtidos a partir das experiências executadas. Evite citar termos com juízo de valor como: "é ruim ...", "é bom ...", etc. prefira colocar: "foi possível observar que 90\% das amostras ...". Aqui também não se deve colocar figuras, tabelas, etc. mas referenciar as que foram abordadas no texto fazendo o fechamento dos resultados.
+Este trabalho propôs a aplicação de uma arquitetura ConvLSTM para a predição de crimes violentos contra o patrimônio na cidade de Maceió, utilizando dados georreferenciados de ocorrências entre 2012 e 2022. O pipeline desenvolvido abrangeu desde o pré-processamento dos dados brutos (limpeza, filtragem espacial por polígono municipal, agrupamento de tipos de crime) até a construção de representações espaço-temporais em grids, o treinamento do modelo e a avaliação com métricas tradicionais e com tolerância espacial.
 
-%TRAB. FUTUROS
+Os resultados preliminares obtidos para Maceió, com semente aleatória 42, indicam que o modelo ConvLSTM é capaz de identificar regiões com maior probabilidade de ocorrência criminal. No threshold de 0,50, o modelo apresentou recall de 72,8\% e precision de 5,9\%, resultando em um F1 de 10,5\%. Esses valores refletem o desafio inerente da esparsidade dos dados: como apenas cerca de 2\% das células apresentam crime em um dado dia, a taxa de falsos positivos é elevada. 
+
+Ao se considerar a avaliação com tolerância espacial (vizinhança de Chebyshev $\leq 1$), os resultados apresentaram melhora expressiva: recall espacial de 86,4\%, precision espacial de 33,1\% e F1 espacial de 45,4\% no threshold de 0,50. O melhor F1 espacial observado foi de 47,8\% no threshold de 0,65, com recall espacial de 77,7\% e precision espacial de 37,5\%. Esses resultados indicam que, embora o modelo não acerte exatamente a célula, uma parcela significativa das previsões incide em vizinhanças imediatas de crimes reais, o que pode ter utilidade prática para o direcionamento de ações preventivas.
+
+Ao longo do treinamento de 200 épocas, observou-se uma redução consistente tanto na perda de treinamento (de 1,358 para 0,743) quanto na perda de validação (de 1,102 para 0,697), sugerindo que o modelo não apresentou sobreajuste significativo apesar do alto dropout aplicado ($p = 0{,}8$).
+
+É importante destacar algumas limitações do presente estudo. A precisão tradicional permaneceu abaixo de 9\% em todos os thresholds, o que significa que a maioria dos alertas gerados pelo modelo não correspondem a ocorrências reais na célula exata. Esse padrão é consistente com os achados da literatura \cite{albors_zumel_deep_2025}, que reporta limitações análogas em cidades norte-americanas. Além disso, o pipeline atual utiliza apenas o canal de crime (modo ``C''), sem incorporar dados sociodemográficos ou de mobilidade, que poderiam contribuir para a melhora do desempenho conforme sugerido por \citeasnoun{albors_zumel_deep_2025}.
+
+O pipeline para Arapiraca encontra-se em fase de pré-processamento: os dados foram filtrados espacialmente (19.141 registros dentro do polígono municipal), mas as etapas de construção de grids, preparação das sequências e treinamento do modelo ainda necessitam ser concluídas.
+
+
 \section{Trabalhos Futuros}
-\label{Sec:Trabalhos Futuros}
-Descreva os trabalhos que você percebeu que daria pra fazer como melhoria, continuidade do que você fez e que por algum motivo não foi possível de fazê-lo.
+\label{Sec:TrabalhosFuturos}
+
+Com base nas limitações identificadas e nas possibilidades abertas pelo pipeline desenvolvido, os seguintes trabalhos futuros podem ser realizados:
+
+\begin{itemize}
+  \item Completar o pipeline para a cidade de Arapiraca, incluindo a construção de grids, treinamento e avaliação do modelo ConvLSTM, permitindo a comparação entre as duas cidades;
+  \item Incorporar canais adicionais de entrada (dados sociodemográficos e de mobilidade) para avaliar se informações contextuais melhoram o desempenho preditivo, conforme o modo ``CMS'' proposto na literatura de referência;
+  \item Experimentar diferentes granularidades temporais (12h, 8h) e tamanhos de janela de lookback (14 dias), comparando o impacto na qualidade da predição;
+  \item Implementar e comparar modelos baseline (persistência do último mapa, média móvel, regressão logística, Random Forest) para quantificar o ganho efetivo da ConvLSTM;
+  \item Avaliar o impacto de diferentes tamanhos de grid e de sub-grid na capacidade preditiva do modelo;
+  \item Investigar técnicas de aumento de dados e estratégias alternativas de balanceamento (focal loss, oversampling de amostras positivas) para mitigar o impacto da esparsidade;
+  \item Explorar a generalização do modelo por meio de transferência de aprendizado entre cidades (treinamento em Maceió e avaliação em Arapiraca, e vice-versa).
+\end{itemize}
 
