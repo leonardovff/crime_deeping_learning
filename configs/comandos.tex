@@ -1,7 +1,7 @@
 % newcommand define novos comandos, que podem passar a ser usados da
 % mesma forma que os comandos LaTeX de base.
 
-% Configuração da fonte
+% ConfiguraÃ§Ã£o da fonte
 %\renewcommand{\familydefault}{\sfdefault}
 
 % Margens ----------------------------------------------------------------------
@@ -18,12 +18,12 @@
 %\setlength{\footskip}{1.0cm}
 %\addtolength{\topmargin}{-1in}
 
-% Capítulos --------------------------------------------------------------------
-% Não aparecer o número na primeira página dos capítulos
+% CapÃ­tulos --------------------------------------------------------------------
+% NÃ£o aparecer o nÃºmero na primeira pÃ¡gina dos capÃ­tulos
 \newcommand{\mychapter}[1]{\chapter{#1}\thispagestyle{empty}}
 \newcommand{\mychapterstar}[1]{\chapter*{#1}\thispagestyle{empty}}
 
-% Os capítulos sem nœmero
+% Os capÃ­tulos sem nÅ“mero
 %\newcommand{\mychapterast}[1]{\chapter*{#1}\thispagestyle{empty}
 %\chaptermark{#1}
 %\afterpage{\markboth{\uppercase{#1}}{\rightmark}}
@@ -33,23 +33,23 @@
 %Referencias
 %\newcommand{\BibTeX}{\textsc{B\hspace{-0.1em}i\hspace{-0.1em}b\hspace{-0.3em}}\TeX}
 
-% Comandos matemáticos ---------------------------------------------------------
-% Implicação em fórmulas
+% Comandos matemÃ¡ticos ---------------------------------------------------------
+% ImplicaÃ§Ã£o em fÃ³rmulas
 %\newcommand{\implica}{\quad\Rightarrow\quad} %Meio de linha
 %\newcommand{\implicafim}{\quad\Rightarrow}   %Fim de linha
 %\newcommand{\tende}{\rightarrow}
 
-% Fração com parenteses
+% FraÃ§Ã£o com parenteses
 %\newcommand{\pfrac}[2]{\parent{\frac{#1}{#2}}}
 
 % Transformada de Laplace e transformada Z
 %\newcommand{\lapl}{\pounds}
 %\newcommand{\transfz}{\mathcal{Z}}
 
-% Sequências
+% SequÃªncias
 %\newcommand{\sequencia}[4]{$#1_{#2}$, $#1_{#3}$, \ldots, $#1_{#4}$}
 
-% Seções sem número
+% SeÃ§Ãµes sem nÃºmero
 %\newcommand{\mysectionast}[1]{\section*{#1}
 %\addcontentsline{toc}{section}{#1}
 %\markright{\uppercase{#1}}
@@ -58,7 +58,7 @@
 % No tabularx, as celulas devem ser centradas verticalmente
 \renewcommand{\tabularxcolumn}[1]{m{#1}}
 
-% Células centralizadas horizontalmente no tabularx
+% CÃ©lulas centralizadas horizontalmente no tabularx
 \newcolumntype{C}{>{\centering\arraybackslash}X}
 
 
@@ -80,4 +80,3 @@
 %\setlength{\itemsep}{0ex plus .2ex minus 0ex}
 %\usecounter{subcount}}
 %}
-

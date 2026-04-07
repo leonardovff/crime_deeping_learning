@@ -14,14 +14,33 @@ organização e desenvolvimento do texto.
 É possível iniciar o capítulo de desenvolvimento informando como será desenvolvido o trabalho e o detalhe das ferramentas ou o conteúdo que será abordado e utilizado. Em seguida comente o conteúdo em conjunto com o conhecimento adquirido junto as consultas e referências bibliográficas. 
 Isso demonstra que foi feito uma pesquisa anterior e mostra que o trabalho tem relevância científica, ou seja, não está sendo "inventada a roda". 
 
-\section{Divisões do documento e referências cruzadas}
-\label{Sec:divisoes}
 
-Sempre que for modificar/aprofundar partes de um tema, é interessante criar uma seção de maneira a tornar o assunto mais focado e facilitar a leitura. 
-Não crie seções sem que estas tenham nenhum texto ou sigam direto para outra seção. Se isso acontecer é melhor rever como está organizado o texto pois pode se tornar necessário remover capítulos ou seções. 
+\section{Revisão de literatura}
+\label{Sec:revisaoliteratura}
 
-No final de cada capítulo é importante apresentar comentário do que foi desenvolvido no texto permitindo ao leitor compreender a visão geral do conteúdo e pode-se inclusive contextualizar o capítulo seguinte.
+\subsection{Redes Neurais Artificiais}
 
+As Redes Neurais Artificiais (RNAs) são sistemas computacionais baseados em modelos matemáticos inspirados no sistema nervoso, buscando aproximar, de forma abstrata, mecanismos de processamento e aprendizagem associados ao cérebro humano \cite{sala2019}. Um marco histórico ocorreu em 1943, quando Warren McCulloch e Walter Pitts propuseram um dos primeiros modelos formais de neurônio artificial através de um modelo matemático que estabeleceu as premissas fundamentais para futuras implementações computacionais \cite{mc1943}. Essas redes operam por processamento paralelo e distribuído, no qual múltiplas unidades simples atuam simultaneamente e de forma interconectada.
+
+Em termos de funcionamento, uma RNA organiza essas unidades em camadas. Cada neurônio recebe valores de entrada, realiza uma combinação ponderada por pesos sinápticos, adiciona um viés e aplica uma função de ativação não linear, gerando um sinal que é propagado para os neurônios da camada seguinte. Essa composição em camadas permite o aprendizado de representações hierárquicas, onde camadas iniciais tendem a capturar padrões mais simples, enquanto camadas posteriores combinam esses padrões para modelar relações mais complexas \cite{gupta2018}.
+
+Além da estrutura em camadas, o desempenho das RNAs depende do processo de treinamento, no qual os pesos e vieses são ajustados para minimizar o erro entre as saídas previstas e os valores reais. Em geral, esse ajuste é realizado por métodos de otimização baseados em gradiente, utilizando o algoritmo de retropropagação do erro (backpropagation) para calcular, de forma eficiente, como cada parâmetro da rede contribui para a função de perda \cite{rumelhart1986learning} . Os diferentes arranjos dessas camadas, bem como a forma como os parâmetros são conectados e compartilhados, dão origem a arquiteturas adequadas a diferentes tipos de dados e tarefas. Redes feedforward processam a informação em um fluxo unidirecional, sendo empregadas em problemas gerais de classificação e regressão. 
+
+Quando os dados apresentam estrutura espacial, as Redes Neurais Convolucionais (CNNs) exploram a organização em grade por meio de operações de convolução e compartilhamento de pesos, tornando-se eficazes para identificar padrões locais e construir representações hierárquicas em imagens e mapas \cite{lecun2015}. Já nos cenários em que a informação é sequencial, as Redes Neurais Recorrentes (RNNs) incorporam um estado interno que é atualizado ao longo do tempo, permitindo a modelagem de dependências temporais entre observações. 
+Contudo, RNNs tradicionais podem apresentar limitações para aprender dependências de longo prazo, motivando o desenvolvimento de arquiteturas com mecanismos de memória e portas de controle, como as Long Short-Term Memory (LSTM) \cite{lipton2015}.
+
+Essas distinções tornam-se especialmente relevantes em problemas espaço-temporais, nos quais é necessário capturar simultaneamente padrões no espaço e dinâmicas de tempo. Nesse contexto, arquiteturas híbridas como a ConvLSTM combinam convoluções (para modelar as correlações espaciais em grids) com recorrência (para representar sequências de mapas), sendo, portanto, adequadas para tarefas de previsão em dados espaço-temporais \cite{shi2015}.
+
+
+\subsection{ConvLSTM}
+
+A ConvLSTM (Convolutional Long Short-Term Memory) é uma arquitetura derivada das redes LSTM, proposta por  Shi et al. em 2015 (trazer referência), como já citado para lidar com sequências espaço-temporais, ou seja, que possuem simultaneamente padrões espaciais e dinâmicas de tempo. Diferentemente da LSTM, em que as transformações entre entrada e estado são realizadas por operações conectadas, a ConvLSTM substitui essas operações por convoluções, preservando a estrutura espacial dos dados ao longo do tempo \textbackslash{}cite\{shi2015\} isso permite que o modelo capture, tanto a evolução temporal quanto as correlações espaciais. 
+
+As convoluções consistem na aplicação de pequenos filtros na entrada, também chamados de kernels, que analisam partes pequenas da grade de dados. Esses filtros identificam a concentração, mudanças e semelhanças entre a região analisada e as regiões vizinhas. A medida que percorrem a entrada, as características capturadas são organizadas em diferentes posições do espaço, formando representações que destacam onde determinados padrões ocorrem. 
+
+%arquitetura
+%origem 
+%diferença
 
 
 \mychapter{Figuras, tabelas e gráficos}

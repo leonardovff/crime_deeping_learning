@@ -1,44 +1,62 @@
 %%
-%% Capítulo 1: Modelo de Capítulo
+%% Capitulo 1: Modelo de Capitulo
 %%
-
-% Está sendo usando o comando \mychapter, que foi definido no arquivo
+% Está¡ sendo usando o comando \mychapter, que foi definido no arquivo
 % comandos.tex. Este comando \mychapter é essencialmente o mesmo que o
 % comando \chapter, com a diferença que acrescenta um \thispagestyle{empty}
 % após o \chapter. Isto é necessário para corrigir um erro de LaTeX, que
 % coloca um número de página no rodapé de todas as páginas iniciais dos
-% capítulos, mesmo quando o estilo de numeração escolhido é outro.
+% capitulos, mesmo quando o estilo de numeração escolhido é outro.
 \mychapter{Introdução}
-\label{Cap:introducao}
-
-%O que escrever
-A introdução deverá ser escrita depois do desenvolvimento do trabalho. Nela deve conter a explicação do que será abordado no trabalho e se necessário um histórico da necessidade do conteúdo. Aqui é importante colocar citação direta onde se pode dizer que Segundo \citeasnoun{Bernardete} e ainda escrever seu próprio texto através da leitura de outros trabalhos e fazer uma citação indireta \cite{Bernardete}. Não é muito interessante colocar figuras aqui na introdução embora não seja proibido. Procure escrever de forma resumida, mas faça valer ao leitor o que de importante ele encontrará na leitura, ou seja, aqui deve-se "vender o peixe" do trabalho.
-
+\label{cap:introducao}
+% O que escrever
+% A introdução deverá ser escrita depois do desenvolvimento do trabalho. Nela deve conter a explicação do que será abordado no trabalho e se necessário um histórico da necessidade do conteudo. Aqui é importante colocar citação direta onde se pode dizer que Segundo \citeasnoun{Bernardete} e ainda escrever seu próprio texto através da leitura de outros trabalhos e fazer uma citação indireta \cite{Bernardete}. Não é muito interessante colocar figuras aqui na introdução embora não seja proibido. Procure escrever de forma resumida, mas faça valer ao leitor o que de importante ele encontrará¡ na leitura, ou seja, aqui deve-se "vender o peixe" do trabalho.
 %Sobre esse trabalho
-Descreva o máximo do que se trata o trabalho e sua importância.
+% Descreva o máximo do que se trata o trabalho e sua importáncia.
+
+%NOVO
+
+Os crimes violentos contra o patrimônio (CVP), como roubos, constituem um fenômeno urbano complexo que afeta diretamente a sensação de segurança \cite{camacho22}. Este fenômeno possui uma dinâmica espaço-temporal própria, na qual as ocorrências não se distribuem de forma aleatória, mas tendem a se concentrar de forma persistente em uma pequena parcela do território. Essa regularidade é chamada, na criminologia, de Lei da Concentração do Crime, proposta por David Weisburd (2015), que demonstra que cerca de 50\% dos crimes de uma cidade costumam ocorrer em apenas 4\% a 6\% de seus segmentos de rua.
+
+Nesse sentido, a análise e a predição do crime podem ser tratadas como um problema de previsão espaço-temporal. Onde o espaço urbano é representado por células de área fixa (grids) e o tempo é discretizado em janelas regulares (dias ou semanas) produzindo sequências de mapas de ocorrência. Entretanto, ao adotar a unidade célula–tempo, surge um desafio técnico significativo: a esparsidade de dados. Como a maioria das células não apresenta ocorrências na maior parte do tempo, os registros tornam-se dominados por zeros, caracterizando a predição, na prática, como uma tarefa de previsão de eventos raros sob alto desbalanceamento \cite{wang2019deep}
+
+Diante desse cenário, este trabalho propõe a predição de crimes violentos contra o patrimônio em Arapiraca e Maceió por meio de uma arquitetura de aprendizado profundo do tipo ConvLSTM, adequada para capturar simultaneamente padrões espaciais (no grid) e dependências temporais (na sequência de mapas). Usando como base metodológica, estudo prévio realizado por ... onde foi empregado ConvLSTM para previsão de crime em múltiplas cidades dos Estados Unidos (incluindo Baltimore, Chicago, Los Angeles e Philadelphia) com dados agregados em grids, buscando indicar a viabilidade dessa abordagem para cenários urbanos distintos.
+
 
 \section{Motivação}
 \label{Sec:Motivacao}
 %Motivação
-Explique aqui porque iniciou as pesquisas no tema e qual a motivação de desenvolver esse trabalho.
+Crimes violentos contra o patrimônio impactam diretamente a sensação de segurança, a mobilidade urbana e a atividade econômica, além de pressionarem recursos públicos destinados à prevenção e à resposta  \cite{camacho22,fe2022bad}. Parte fundamental dessa prevenção esta relacionada a coleta e análise de dados relacionados a esses eventos. O Fórum Brasileiro de Segurança Pública divulga anualmente os dados de segurança a nível nacional, tendo o do ano de 2025 apontado transformações importantes nas dinâmicas criminais, com redução de diversos crimes ocorridos no espaço público e, em sentido oposto, aumento de registros ligados a fraudes e golpes (crimes patrimoniais associados ao ambiente virtual). Apesar dessa inversão, os crimes cometidos no espaço físico, especialmente os crimes violentos contra o patrimonio,  continuam a exercer impacto social e econômico, especialmente em centros urbanos como Maceió \cite{fe2022bad,fbsp2025} 
+
+Nesse cenário, é relevante investigar alternativas tecnológicas que apoiem medidas preventivas, principalmente as capazes de estimar o risco futuro por área e por período, oferecendo subsídios para decisões mais precisas para alocação de recursos e direcionamento de ações. Considerando que a ocorrência criminal apresenta dependências no tempo e no espaço e pode se concentrar em hotspots \cite{Weisburd2022}, abordagens de modelagem espaço-temporal tendem a ser mais adequadas do que análises puramente temporais ou apenas descritivas. Assim, avaliar o uso de ConvLSTM com representações em grids, com validação apropriada e discussão de limitações, pode contribuir para a literatura aplicada e para iniciativas locais de planejamento e prevenção. 
+
 
 \section{Objetivo}
 \label{Sec:Objetivo}
 %Objetivo
-Descreva o objetivo principal do trabalho. Tente criar um parágrafo resumindo o que seu trabalho fará. Depois seja mais específico, pode inclusive criar tópicos para a Seção \ref{Sec:ObjetivoEspecifico}.
+% Descreva o objetivo principal do trabalho. Tente criar um parágrafo resumindo o que seu trabalho fará. Depois seja mais especéfico, pode inclusive criar tópicos para a Sessão \ref{Sec:ObjetivoEspecifico}.
 
-\subsection{Objetivo específico}
+Desenvolver, implementar e avaliar um modelo de aprendizagem  baseado em ConvLSTM para predição de crimes violentos contra o patrimônio, a partir de dados históricos georreferenciados das cidades de Maceió e Arapiraca, organizados em uma representação espacial por grids de modo a capturar padrões de concentração, visando produzir previsões de risco em janelas futuras para apoio analítico a estratégias preventivas.
+
+\subsection{\textbf{Objetivos Específicos}}
 \label{Sec:ObjetivoEspecifico}
 \begin{itemize}
-  \item Criar uma ferramenta que ... ;
-  \item Criar ... ;
+  \item Organizar e preparar os dados históricos de ocorrências (padronização de datas, georreferenciamento, remoção de inconsistências e tratamento de ausências). ;
+  \item Definir a representação em grids, estabelecendo tamanho de célula e granularidade temporal (por exemplo, diário ou semanal), e gerar as sequências de mapas de ocorrência ao longo do período analisado. ;
+  \item Caracterizar a esparsidade/desbalanceamento no nível célula–tempo e definir a formulação do alvo (contagem por célula ou variável binária ocorrência/não ocorrência), justificando a escolha. ;
+  \item Implementar o modelo ConvLSTM e um pipeline de treino/validação/teste que respeite a ordem temporal (evitando vazamento de informação do futuro). ;
+  \item Comparar o ConvLSTM com baselines (ex.: persistência do último mapa, média móvel, ou modelos mais simples), verificando ganhos reais de desempenho. ;
+  \item Avaliar o desempenho com métricas adequadas para dados esparsos (incluindo análise por célula e análise agregada por regiões), e discutir limitações, vieses e implicações de uso em contexto real. ;
 \end{itemize}
 
+%ANTIGOOO
 
+
+%Este trabalho tem por objetivo validar se o desempenho e as limitações identificados em estudos prévios sobre previsão e análise espacial do crime se repetem em uma nova realidade urbana (no caso, a cidade de Arapiraca, Alagoas). Em particular, busca-se averiguar se uma das principais limitações observadas em pesquisas internacionais – a baixa precisão preditiva dos modelos – também se manifesta nesse novo contexto. Estudos recentes de previsão criminal em múltiplas cidades reportaram que as ferramentas atuais acertam apenas cerca de 10\% das ocorrências previstas, ou seja, de cada dez alertas de risco de crime, nove acabam não se concretizando. Essa precisão extremamente baixa, constatada de forma consistente nas quatro cidades americanas analisadas por Campedelli et al. (2025), evidencia os limites dos modelos atuais diante da natureza esparsa e volátil dos eventos criminais. Verificar se Arapiraca apresenta desempenho semelhante – isto é, se os algoritmos produzirão muitos falsos positivos e acertos limitados, de modo análogo ao observado nos cenários dos EUA – é fundamental para avaliar a generalização dos achados do estudo original.
+
+%A escolha de Arapiraca como objeto de estudo deve-se à disponibilidade e qualidade dos dados georreferenciados de criminalidade nesse município. Segundo informações da Polícia Militar de Alagoas, houve um esforço de apuração e validação das coordenadas (latitude e longitude) registradas nas ocorrências criminais de Arapiraca, conferindo maior precisão espacial aos dados. Em contrapartida, na capital Maceió tal refinamento não foi realizado com o mesmo rigor, resultando em dados de localização menos confiáveis. Dessa forma, Arapiraca oferece uma base de dados mais consistente para a aplicação da metodologia de análise espacial do crime e para a replicação dos resultados obtidos no estudo original. Em síntese, o objetivo central é testar, no contexto urbano de Arapiraca, se os padrões de desempenho e limitações dos modelos observados em cidades norte-americanas se confirmam, contribuindo assim para avaliar a robustez e alcance geral desses modelos preditivos em uma realidade urbana distinta.
 
 \section{Organização do trabalho}
 \label{Sec:Organização}
-%Organiza�‹o do trabalho   
-Sempre que precisar referenciar outra parte de seu trabalho use o comando \\ref apontando para o que você colocou no \\label como por exemplo essa Seção \ref{Sec:Organização}. Aqui você deverá informar como e porque seu trabalho foi organizado, informando o que será abordado em cada capítulo.
-
-
+%Organização do trabalho   
+Sempre que precisar referenciar outra parte de seu trabalho use o comando \\ref apontando para o que você colocou no \\label como por exemplo essa Sessão \ref{Sec:Organização}. Aqui você deverá¡ informar como e porque seu trabalho foi organizado, informando o que será abordado em cada capítulo.
