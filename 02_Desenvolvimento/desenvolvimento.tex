@@ -283,13 +283,11 @@ Aplicando a Equação~\ref{eq:grid_size} ao polígono de Maceió, obtido via Ope
 
 \subsubsection{Máscara de validade}
 
-Uma máscara binária de $73 \times 73$ foi gerada, indicando quais células do grid possuem interseção com o polígono municipal. Essa máscara é utilizada na etapa de avaliação para ignorar células que estão fora dos limites da cidade.
-% TODO: Atualizar o número de células válidas (dentro do polígono) após reexecução do pipeline com $N = 73$. Com $N = 39$, eram 811 de 1.521.
+Uma máscara binária de $73 \times 73$ foi gerada, indicando quais células do grid possuem interseção com o polígono municipal. Das $5.329$ células totais, $2.714$ ($\approx 50{,}9\%$) estão efetivamente dentro do polígono de Maceió e são consideradas válidas. Essa máscara é utilizada na etapa de avaliação para ignorar células que estão fora dos limites da cidade.
 
 \subsubsection{Agregação temporal}
 
-As ocorrências foram contabilizadas por célula e por hora do ano, formando uma matriz esparsa \textit{célula} $\times$ \textit{hora}, para cada tipo de crime e para cada ano. Em seguida, essas matrizes horárias foram agregadas em janelas diárias (granularidade de 24h), resultando em sequências temporais com aproximadamente 365 passos por ano. As contagens dos 5 tipos de crime foram somadas e binarizadas (presença/ausência de crime: $\geq 1 \rightarrow 1$, caso contrário $\rightarrow 0$), produzindo um tensor final de dimensão $T \times 73 \times 73 \times 1$ (dias $\times$ linhas $\times$ colunas $\times$ canais) para Maceió, abrangendo 2012--2022.
-% TODO: Confirmar o número exato de passos temporais $T$ após reexecução do pipeline com $N = 73$. Anteriormente, com $N = 39$, era $T = 4.018$.
+As ocorrências foram contabilizadas por célula e por hora do ano, formando uma matriz esparsa \textit{célula} $\times$ \textit{hora}, para cada tipo de crime e para cada ano. Em seguida, essas matrizes horárias foram agregadas em janelas diárias (granularidade de 24h), resultando em sequências temporais com aproximadamente 365 passos por ano. As contagens dos 5 tipos de crime foram somadas e binarizadas (presença/ausência de crime: $\geq 1 \rightarrow 1$, caso contrário $\rightarrow 0$), produzindo um tensor final de dimensão $T \times 73 \times 73 \times 1$ (dias $\times$ linhas $\times$ colunas $\times$ canais) para Maceió, com $T = 3.996$ passos diários abrangendo 2012--2022.
 
 \subsection{Preparação para treinamento}
 \label{Sec:preparacao}
@@ -300,7 +298,7 @@ Uma janela deslizante de 8 passos (7 dias de lookback + 1 dia de alvo) foi aplic
 
 % TODO: Justificar as seguintes escolhas de hiperparâmetros do pipeline:
 % - Por que lookback de 7 dias (e não 14, como no artigo de referência)?
-% - Por que sub-grids de 16×16? Qual a relação com o grid total de 39×39?
+% - Por que sub-grids de 16×16? Qual a relação com o grid total de 73×73?
 % - Por que 5 sub-grids por amostra temporal? Isso multiplica os dados por 5.
 % - Essas escolhas foram baseadas no artigo de referência, em experimentos
 %   preliminares, ou em limitações computacionais?
