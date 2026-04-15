@@ -270,31 +270,33 @@ Para cada cidade, o polígono do limite municipal foi obtido via OpenStreetMap (
 
 \subsubsection{Geração da grade espacial}
 
-A grade espacial foi construída sobrepondo uma matriz regular $N \times N$ ao \textit{bounding box} do polígono municipal obtido via OpenStreetMap. O valor de $N$ não foi escolhido arbitrariamente: seguindo a metodologia de \citeonline{alborszumel2025}, fixou-se a \emph{área-alvo} de cada célula em aproximadamente $0{,}2$~km\textsuperscript{2} (equivalente a $0{,}077$ milhas quadradas, unidade espacial empregada no estudo de referência nas quatro cidades norte-americanas analisadas --- Baltimore, Chicago, Los Angeles e Filadélfia). Essa escolha representa um compromisso entre granularidade espacial fina o suficiente para capturar padrões micro-geográficos de concentração criminal (\textit{law of crime concentration}) e densidade de eventos suficiente para evitar esparsidade extrema que inviabilizaria o aprendizado.
+A grade espacial foi construída sobrepondo uma matriz regular $N \times N$ ao \textit{bounding box} do polígono municipal obtido via OpenStreetMap. O valor de $N$ não foi escolhido arbitrariamente: seguindo a metodologia de \citeonline{albors_zumel_deep_2025}, fixou-se a \emph{área-alvo} de cada célula em aproximadamente $0{,}2$~km\textsuperscript{2} (equivalente a $0{,}077$ milhas quadradas, unidade espacial empregada no estudo de referência nas quatro cidades norte-americanas analisadas --- Baltimore, Chicago, Los Angeles e Filadélfia). Essa escolha representa um compromisso entre granularidade espacial fina o suficiente para capturar padrões micro-geográficos de concentração criminal (\textit{law of crime concentration}) e densidade de eventos suficiente para evitar esparsidade extrema que inviabilizaria o aprendizado.
 
 Dado o alvo de área por célula, o número de divisões $N$ é derivado automaticamente do tamanho do \textit{bounding box} da cidade pela relação
 \begin{equation}
 N = \operatorname{round}\!\left(\sqrt{\dfrac{A_{\text{bbox}}}{A_{\text{célula}}}}\right),
 \label{eq:grid_size}
 \end{equation}
-\noindent em que $A_{\text{bbox}}$ é a área do \textit{bounding box} do polígono municipal (em km\textsuperscript{2}), calculada convertendo graus para quilômetros com correção de latitude, e $A_{\text{célula}} = 0{,}2$~km\textsuperscript{2}. Essa formulação torna o procedimento reutilizável para qualquer cidade --- basta substituir o polígono de entrada --- e reproduz, por construção, os valores de $N$ reportados em \citeonline{alborszumel2025} para as cidades estudadas (por exemplo, $N = 39$ para Baltimore e $N = 85$ para Chicago).
+\noindent em que $A_{\text{bbox}}$ é a área do \textit{bounding box} do polígono municipal (em km\textsuperscript{2}), calculada convertendo graus para quilômetros com correção de latitude, e $A_{\text{célula}} = 0{,}2$~km\textsuperscript{2}. Essa formulação torna o procedimento reutilizável para qualquer cidade --- basta substituir o polígono de entrada --- e reproduz, por construção, os valores de $N$ reportados em \citeonline{albors_zumel_deep_2025} para as cidades estudadas (por exemplo, $N = 39$ para Baltimore e $N = 85$ para Chicago).
 
 Aplicando a Equação~\ref{eq:grid_size} ao polígono de Maceió, obtido via OpenStreetMap, o \textit{bounding box} abrange aproximadamente $28{,}1 \times 37{,}8$~km ($\approx 1.063$~km\textsuperscript{2}), resultando em $N = 73$. Portanto, utilizou-se uma grade de $73 \times 73$ células ($5.329$ células no total), cada uma com área nominal de $\approx 0{,}2$~km\textsuperscript{2}, preservando a mesma resolução espacial do estudo de referência. Cada ocorrência criminal foi atribuída à célula correspondente por meio de verificação de contenção geométrica (\textit{point-in-polygon}).
 
 \subsubsection{Máscara de validade}
 
-Uma máscara binária de $39 \times 39$ foi gerada, indicando quais células do grid possuem interseção com o polígono municipal. Para Maceió, 811 das 1.521 células foram marcadas como válidas. Essa máscara é utilizada na etapa de avaliação para ignorar células que estão fora dos limites da cidade.
+Uma máscara binária de $73 \times 73$ foi gerada, indicando quais células do grid possuem interseção com o polígono municipal. Essa máscara é utilizada na etapa de avaliação para ignorar células que estão fora dos limites da cidade.
+% TODO: Atualizar o número de células válidas (dentro do polígono) após reexecução do pipeline com $N = 73$. Com $N = 39$, eram 811 de 1.521.
 
 \subsubsection{Agregação temporal}
 
-As ocorrências foram contabilizadas por célula e por hora do ano, formando uma matriz esparsa \textit{célula} $\times$ \textit{hora}, para cada tipo de crime e para cada ano. Em seguida, essas matrizes horárias foram agregadas em janelas diárias (granularidade de 24h), resultando em sequências temporais com aproximadamente 365 passos por ano. As contagens dos 5 tipos de crime foram somadas e binarizadas (presença/ausência de crime: $\geq 1 \rightarrow 1$, caso contrário $\rightarrow 0$), produzindo um tensor final de dimensão $4.018 \times 39 \times 39 \times 1$ (dias $\times$ linhas $\times$ colunas $\times$ canais) para Maceió, abrangendo 2012--2022.
+As ocorrências foram contabilizadas por célula e por hora do ano, formando uma matriz esparsa \textit{célula} $\times$ \textit{hora}, para cada tipo de crime e para cada ano. Em seguida, essas matrizes horárias foram agregadas em janelas diárias (granularidade de 24h), resultando em sequências temporais com aproximadamente 365 passos por ano. As contagens dos 5 tipos de crime foram somadas e binarizadas (presença/ausência de crime: $\geq 1 \rightarrow 1$, caso contrário $\rightarrow 0$), produzindo um tensor final de dimensão $T \times 73 \times 73 \times 1$ (dias $\times$ linhas $\times$ colunas $\times$ canais) para Maceió, abrangendo 2012--2022.
+% TODO: Confirmar o número exato de passos temporais $T$ após reexecução do pipeline com $N = 73$. Anteriormente, com $N = 39$, era $T = 4.018$.
 
 \subsection{Preparação para treinamento}
 \label{Sec:preparacao}
 
 \subsubsection{Janela deslizante e sub-grids}
 
-Uma janela deslizante de 8 passos (7 dias de lookback + 1 dia de alvo) foi aplicada sobre a sequência temporal. Para cada amostra, em vez de utilizar o grid completo de $39 \times 39$, foram extraídos 5 sub-grids de $16 \times 16$ em posições aleatórias dentro da grade, ampliando o volume de amostras de treinamento e permitindo que o modelo opere sobre regiões locais da cidade.
+Uma janela deslizante de 8 passos (7 dias de lookback + 1 dia de alvo) foi aplicada sobre a sequência temporal. Para cada amostra, em vez de utilizar o grid completo de $73 \times 73$, foram extraídos 5 sub-grids de $16 \times 16$ em posições aleatórias dentro da grade, ampliando o volume de amostras de treinamento e permitindo que o modelo opere sobre regiões locais da cidade.
 
 % TODO: Justificar as seguintes escolhas de hiperparâmetros do pipeline:
 % - Por que lookback de 7 dias (e não 14, como no artigo de referência)?
