@@ -1,0 +1,109 @@
+%%
+%% Capítulo 3: Resultados e Discussão
+%%
+
+\mychapter{Resultados e Discussão}
+\label{cap:resultados}
+
+Este capítulo apresenta os resultados obtidos com o modelo ConvLSTM treinado para a predição de crimes violentos contra o patrimônio na cidade de Maceió, conforme o pipeline descrito no Capítulo~\ref{Cap:desenvolvimento}. Os experimentos foram conduzidos com semente aleatória fixada em \texttt{seed} $= 42$ para garantir reprodutibilidade, utilizando apenas o canal de ocorrência criminal (modo ``C'') como entrada.
+
+\section{Configuração experimental}
+\label{Sec:ConfigExperimental}
+
+O conjunto de dados de Maceió, após a janela deslizante e a extração de sub-grids, resultou em $17.985$ amostras de treinamento e $1.925$ amostras de validação (cada amostra com entrada de formato $7 \times 16 \times 16 \times 1$ e alvo $16 \times 16$). O modelo ConvLSTM implementado possui $9.262$ parâmetros treináveis, arranjados em $3$ camadas empilhadas com $7$ canais ocultos e núcleo convolucional $3 \times 3$, seguidos de uma camada \textit{dropout} com $p = 0{,}8$ e uma convolução final $3 \times 3$ que produz o mapa de probabilidades de ocorrência.
+
+O treinamento foi realizado por $200$ épocas com otimizador Adam (taxa de aprendizado $1 \times 10^{-5}$), \textit{batch size} de $55$ e escalonamento de taxa de aprendizado \texttt{CosineAnnealingLR} com $T_{\max} = 20$. A função de perda adotada foi \texttt{BCEWithLogitsLoss} com \texttt{pos\_weight} $\approx 48{,}18$, calculado como a razão entre células negativas e positivas no conjunto de treinamento, dada a severa esparsidade dos dados ($\sim$2\% das células apresentam crime em qualquer dia).
+
+\section{Curvas de treinamento}
+\label{Sec:CurvasTreinamento}
+
+Ao longo das $200$ épocas, observou-se uma redução consistente tanto na perda de treinamento quanto na perda de validação. A perda de treinamento reduziu de $1{,}358$ (época $0$) para $0{,}743$ (época $199$), enquanto a perda de validação reduziu de $1{,}102$ para $0{,}697$ no mesmo intervalo. A ausência de divergência entre as duas curvas, combinada ao fato de a perda de validação se manter sistematicamente abaixo da perda de treinamento, sugere que o modelo não apresentou sobreajuste significativo --- comportamento compatível com o \textit{dropout} de $p = 0{,}8$ aplicado antes da convolução final.
+
+% TODO: inserir figura com a curva de loss (train × val) ao longo das 200 épocas.
+\textbf{[PENDENTE]} -- Inserir a figura com a curva de \textit{loss} (treino $\times$ validação) gerada a partir do log de treinamento do notebook \texttt{trainning-maceio.ipynb}.
+
+\section{Métricas por threshold}
+\label{Sec:MetricasThreshold}
+
+A saída do modelo, após a aplicação da função sigmoide, fornece uma probabilidade de ocorrência de crime por célula. A conversão dessa probabilidade em classe binária exige a escolha de um \textit{threshold} $\tau$: células com probabilidade $\geq \tau$ são classificadas como positivas. Foram avaliados $51$ valores de \textit{threshold} no intervalo $[0{,}50;\ 1{,}00]$, com passo de $0{,}01$. Para cada \textit{threshold} foram calculadas métricas clássicas de classificação binária (\textit{recall}, \textit{precision} e F1) e suas variantes com tolerância espacial, nas quais um falso positivo é reclassificado como acerto caso exista um crime real em uma célula vizinha (distância de Chebyshev $\leq 1$), conforme descrito na Seção~\ref{Sec:avaliacao}.
+
+\subsection{Métricas tradicionais}
+\label{Sec:MetricasTradicionais}
+
+A Tabela~\ref{tab:metricas-tradicionais} apresenta as métricas tradicionais para \textit{thresholds} representativos. O comportamento observado é característico de problemas com classes severamente desbalanceadas: à medida que o \textit{threshold} aumenta, o \textit{recall} cai rapidamente enquanto a \textit{precision} cresce de forma marginal, jamais ultrapassando $\sim$9\%.
+
+\begin{table}[htb]
+\centering
+\caption{Métricas tradicionais (sem tolerância espacial) por \textit{threshold} para Maceió (\texttt{seed} $= 42$).}
+\label{tab:metricas-tradicionais}
+\begin{tabular}{cccc}
+\hline
+\textbf{Threshold} & \textbf{Recall} & \textbf{Precision} & \textbf{F1} \\
+\hline
+0{,}50 & 0{,}7275 & 0{,}0595 & 0{,}1050 \\
+0{,}55 & 0{,}6843 & 0{,}0629 & 0{,}1093 \\
+0{,}60 & 0{,}6349 & 0{,}0673 & 0{,}1149 \\
+0{,}65 & 0{,}5725 & 0{,}0717 & 0{,}1194 \\
+0{,}70 & 0{,}4856 & 0{,}0765 & 0{,}1220 \\
+\textbf{0{,}75} & \textbf{0{,}3878} & \textbf{0{,}0838} & \textbf{0{,}1261} \\
+0{,}80 & 0{,}2573 & 0{,}0894 & 0{,}1174 \\
+0{,}85 & 0{,}1322 & 0{,}0839 & 0{,}0899 \\
+0{,}90 & 0{,}0350 & 0{,}0507 & 0{,}0362 \\
+\hline
+\end{tabular}
+\end{table}
+
+O melhor F1 tradicional foi observado em $\tau = 0{,}75$, com valor de $0{,}1261$ (\textit{recall} $= 0{,}3878$ e \textit{precision} $= 0{,}0838$). Mesmo nesse ponto ótimo, a \textit{precision} permanece inferior a $9\%$, indicando que cerca de $91\%$ dos alertas gerados pelo modelo não correspondem a ocorrências reais na célula exata. Esse padrão é consistente com os achados de \citeonline{albors_zumel_deep_2025} em quatro cidades norte-americanas, reforçando a tese de que a métrica célula-a-célula é excessivamente rigorosa para problemas de previsão criminal em grids de alta resolução.
+
+\subsection{Métricas com tolerância espacial}
+\label{Sec:MetricasEspaciais}
+
+A Tabela~\ref{tab:metricas-espaciais} apresenta as métricas com tolerância espacial (vizinhança de Chebyshev $\leq 1$) para os mesmos \textit{thresholds}. A mudança de perspectiva --- passar a considerar acerto qualquer previsão que caia em uma das $8$ células vizinhas de um crime real --- produz um salto expressivo em todas as métricas.
+
+\begin{table}[htb]
+\centering
+\caption{Métricas com tolerância espacial (vizinhança de Chebyshev $\leq 1$) por \textit{threshold} para Maceió (\texttt{seed} $= 42$).}
+\label{tab:metricas-espaciais}
+\begin{tabular}{cccc}
+\hline
+\textbf{Threshold} & \textbf{Recall espacial} & \textbf{Precision espacial} & \textbf{F1 espacial} \\
+\hline
+0{,}50 & 0{,}8637 & 0{,}3313 & 0{,}4540 \\
+0{,}55 & 0{,}8443 & 0{,}3464 & 0{,}4642 \\
+0{,}60 & 0{,}8199 & 0{,}3595 & 0{,}4719 \\
+\textbf{0{,}65} & \textbf{0{,}7771} & \textbf{0{,}3755} & \textbf{0{,}4776} \\
+0{,}70 & 0{,}7172 & 0{,}3858 & 0{,}4725 \\
+0{,}75 & 0{,}6231 & 0{,}3922 & 0{,}4527 \\
+0{,}80 & 0{,}4741 & 0{,}3876 & 0{,}3975 \\
+0{,}85 & 0{,}2838 & 0{,}3329 & 0{,}2849 \\
+0{,}90 & 0{,}0924 & 0{,}1972 & 0{,}1169 \\
+\hline
+\end{tabular}
+\end{table}
+
+O melhor F1 espacial foi obtido em $\tau = 0{,}65$, atingindo $0{,}4776$ (\textit{recall} espacial $= 0{,}7771$ e \textit{precision} espacial $= 0{,}3755$). Em $\tau = 0{,}50$, o modelo captura $86{,}4\%$ dos crimes reais na vizinhança imediata, ao custo de uma \textit{precision} espacial de $33{,}1\%$. Comparando as Tabelas~\ref{tab:metricas-tradicionais} e \ref{tab:metricas-espaciais}, observa-se que a tolerância espacial multiplica o F1 por um fator de aproximadamente $4\times$ no \textit{threshold} ótimo, evidenciando que o modelo aprende a localizar corretamente vizinhanças de risco, ainda que erre a célula exata.
+
+% TODO: inserir figura com curvas (recall, precision, F1) × threshold para as duas métricas (tradicional e espacial).
+\textbf{[PENDENTE]} -- Inserir a figura com as curvas (\textit{recall}, \textit{precision}, F1) $\times$ \textit{threshold} para as duas variantes (tradicional e espacial).
+
+\section{Análise qualitativa}
+\label{Sec:AnaliseQualitativa}
+
+% TODO: escolher algumas amostras de validação e apresentar mapas com:
+% (a) o alvo real (y_val), (b) a probabilidade predita (antes do threshold),
+% (c) a predição binarizada no threshold ótimo (0,65 para F1 espacial).
+% As previsões e alvos estão salvos em ./output/maceio/predictions/
+% como convlstm_predictions_maceio_42.pkl e convlstm_targets_maceio_42.pkl.
+\textbf{[PENDENTE]} -- Apresentar análise qualitativa com mapas lado a lado de: (a) alvo real, (b) probabilidade predita pelo modelo, (c) predição binarizada no \textit{threshold} ótimo ($\tau = 0{,}65$), para amostras representativas do conjunto de validação. As previsões e alvos do último \textit{epoch} encontram-se salvos em \texttt{./output/maceio/predictions/} nos arquivos \texttt{convlstm\_predictions\_maceio\_42.pkl} e \texttt{convlstm\_targets\_maceio\_42.pkl}.
+
+\section{Discussão}
+\label{Sec:Discussao}
+
+Os resultados apresentados permitem as seguintes observações:
+
+\begin{itemize}
+  \item \textbf{Desbalanceamento dominante.} A esparsidade extrema ($\sim$2\% de células positivas por dia) é o fator estrutural mais relevante. Mesmo com \texttt{pos\_weight} $\approx 48{,}18$, a \textit{precision} tradicional satura abaixo de $9\%$ em todos os \textit{thresholds}, corroborando o diagnóstico de \citeonline{albors_zumel_deep_2025} de que a tarefa célula-a-célula é fundamentalmente mal-posta sob classes tão desbalanceadas.
+  \item \textbf{Utilidade prática na vizinhança.} Ao permitir uma tolerância espacial de uma célula, o F1 salta de $\sim$$12\%$ para $\sim$$48\%$. Como cada célula do grid tem $\sim$$0{,}2$~km\textsuperscript{2} de área, uma vizinhança de Chebyshev $\leq 1$ corresponde a uma janela de aproximadamente $3 \times 3$ células ($\sim$$1{,}8$~km\textsuperscript{2}), granularidade coerente com o porte de uma operação de patrulhamento preventivo.
+  \item \textbf{Escolha do \textit{threshold}.} Os pontos ótimos das duas métricas são próximos mas distintos ($\tau = 0{,}75$ para F1 tradicional \textit{versus} $\tau = 0{,}65$ para F1 espacial), sugerindo que a calibração deve considerar o tipo de resposta operacional esperada. Valores de $\tau$ no intervalo $[0{,}60;\ 0{,}70]$ oferecem o melhor compromisso entre cobertura e precisão para uso prático.
+  \item \textbf{Limitações.} Os valores reportados referem-se a uma única execução com \texttt{seed} $= 42$. Não foram executados \textit{baselines} (persistência, média móvel) para quantificar o ganho efetivo da ConvLSTM, nem foram incorporados canais adicionais (mobilidade, sociodemografia), limitações já elencadas entre os trabalhos futuros.
+\end{itemize}
