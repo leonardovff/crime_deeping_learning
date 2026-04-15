@@ -94,7 +94,19 @@ Essas distinções tornam-se especialmente relevantes em problemas espaço-tempo
 
 A ConvLSTM (Convolutional Long Short-Term Memory) é uma arquitetura derivada das redes LSTM, proposta por Shi et al. \cite{shi2015}, como já citado, para lidar com sequências espaço-temporais, ou seja, que possuem simultaneamente padrões espaciais e dinâmicas de tempo. Diferentemente da LSTM, em que as transformações entre entrada e estado são realizadas por operações totalmente conectadas, a ConvLSTM substitui essas operações por convoluções, preservando a estrutura espacial dos dados ao longo do tempo. Isso permite que o modelo capture tanto a evolução temporal quanto as correlações espaciais. 
 
-As convoluções consistem na aplicação de pequenos filtros na entrada, também chamados de kernels, que analisam partes pequenas da grade de dados. Esses filtros identificam a concentração, mudanças e semelhanças entre a região analisada e as regiões vizinhas. À medida que percorrem a entrada, as características capturadas são organizadas em diferentes posições do espaço, formando representações que destacam onde determinados padrões ocorrem. 
+As convoluções consistem na aplicação de pequenos filtros na entrada, também chamados de kernels, que analisam partes pequenas da grade de dados. Esses filtros identificam a concentração, mudanças e semelhanças entre a região analisada e as regiões vizinhas. À medida que percorrem a entrada, as características capturadas são organizadas em diferentes posições do espaço, formando representações que destacam onde determinados padrões ocorrem \cite{lecun1998}. 
+
+Na ConvLSTM, cada observação da sequência temporal é representada em uma estrutura organizada sobre uma grade espacial, preservando a posição relativa das informações ao longo do tempo. Diferentemente de abordagens que transformam cada instante em um vetor, essa arquitetura incorpora convoluções nas transições entre a entrada, o estado oculto e a memória. Com isso, a atualização de cada região passa a considerar não apenas o histórico temporal cumulativo, mas também a influência exercida pelas regiões vizinhas, favorecendo a modelagem de correlações espaço-temporais em dados estruturados em mapas ou grades \cite{shi2015,shi2017}.
+
+No contexto da predição criminal, essa característica é especialmente relevante, pois a ocorrência de eventos em uma célula pode estar associada tanto ao comportamento observado em períodos anteriores quanto à dinâmica espacial das células vizinhas. Assim, a ConvLSTM oferece uma estrutura adequada para modelar, de forma integrada, dependências temporais e relações espaciais locais em problemas representados por grades espaciais \cite{shi2015}. (conexão com o tema do tcc)
+
+\subsection{Metricas de performance}
+
+
+\href{https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://translate.google.com/translate%3Fu%3Dhttps://arize.com/blog-course/f1-score/%26hl%3Dpt%26sl%3Den%26tl%3Dpt%26client%3Dsrp&ved=2ahUKEwiB0P3C--iTAxVqq5UCHXSxEuYQFnoECBMQAQ&usg=AOvVaw3b6jGt68hefUMhSBYqkpg2}{leitura inicial} - definir palavras de busca
+
+
+
 
 %% ================================================================
 %% TODO: Equações formais da ConvLSTM
